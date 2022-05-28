@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const port = process.env.PORT || 3000;
 require('dotenv').config();
+
 const mongoose = require('mongoose');
 // import from model/Quote
 const Quotes = require('./models/Quote');
@@ -17,7 +18,7 @@ app.get('/', async (req, res) => {
 
     let data='def'
 	try {
-		res.status(200).render(__dirname + '/public/index.ejs',{data:data});
+		res.status(200).send({message:"use /quotes"})
 	} catch (err) {
 		console.log(err);
 	}
@@ -52,7 +53,7 @@ app.post('/quotes', async (req, res) => {
        
 		writeToDb(reqBody.quoteId, reqBody.title, reqBody.author, reqBody.quote);
         // TODO: show string in req to tell user that quote has been added/POSTed
-        res.status(201).send({message:`${reqBody.quoteId} has been added`,reqBody})
+        res.status(201).redirect('/quotes')
  
 		
 	} catch (err) {
@@ -135,3 +136,6 @@ const sorter=(data,params,type)=>{
     return data.sort((a,b)=>(type==='asc'? a[params]-b[params]:b[params]-a[params]))
 
 }
+
+console.log("process.env",process.env)
+console.log("process.env",process.env.dburi)
