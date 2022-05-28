@@ -9,12 +9,15 @@ const Quotes = require('./models/Quote');
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.set('json spaces', 2);
+app.set('view engine', 'ejs');
 app.listen(port, () => console.log('listening on port 3000'));
 
 // home page
 app.get('/', async (req, res) => {
+
+    let data='def'
 	try {
-		res.status(200).sendFile(__dirname + '/public/index.html');
+		res.status(200).render(__dirname + '/public/index.ejs',{data:data});
 	} catch (err) {
 		console.log(err);
 	}
@@ -23,7 +26,10 @@ app.get('/', async (req, res) => {
 app.get('/quotes', async (req, res) => {
 	try {
 		const data = await readFromDb();
-		res.status(200).send(sorter(data,'quoteId','asc'));
+        
+		// res.status(200).send(sorter(data,'quoteId','asc'));
+        res.status(200).render(__dirname + '/public/index.ejs',{data:data});
+
 	} catch (err) {
 		console.log(err);
 	}
@@ -43,7 +49,7 @@ app.get('/quotes/:id', async (req, res) => {
 app.post('/quotes', async (req, res) => {
 	try {
 		const reqBody = req.body;
-        console.log(reqBody);
+       
 		writeToDb(reqBody.quoteId, reqBody.title, reqBody.author, reqBody.quote);
         // TODO: show string in req to tell user that quote has been added/POSTed
         res.status(201).send({message:`${reqBody.quoteId} has been added`,reqBody})
@@ -74,6 +80,7 @@ app.patch('/quotes/:id', async (req, res) => {
 // delete a quote
 app.delete('/quotes/:id', async (req, res) => {
     let quoteId=req.params.id
+    console.log("deleting...",quoteId)
 	try {
         deleteFromDb(quoteId)
         res.status(202).send({message:`${quoteId} has been deleted`})

@@ -1,0 +1,83 @@
+<%- include('header'); -%>
+
+
+    <!DOCTYPE html>
+    <html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+    </head>
+
+    <body>
+
+        <form action="/quotes" method="post">
+            <input type="text" placeholder="quoteId" name="quoteId">
+            <input type="text" placeholder="author" name="author">
+            <input type="text" placeholder="title" name="title">
+            <input type="text" placeholder="quote" name="quote">
+            <button type="submit" id="postQuote">Submit</button>
+
+        </form>
+
+
+
+
+        <% for(var i=0; i < data.length; i++) {%>
+            <li class="quote">
+                <!-- Output name from the iterated quote object -->
+                <span>
+                    <%= data[i].quoteId %>
+                </span>||
+                <span>
+                    Title: <%= data[i].title %>
+                </span>||
+                <span>
+                    Author: <%= data[i].author %>
+                </span>||
+                <span>
+                    Quote: <%= data[i].quote %>
+                </span>
+
+                <button class="delete-button" id=<%=data[i].quoteId %>>delete</button>
+            </li>
+            <% } %>
+
+
+
+
+
+
+
+
+                <script>
+                    const deleteButton = document.querySelectorAll('.delete-button')
+
+                    deleteButton.forEach(button => {
+                        button.addEventListener('click', (e) => {
+
+                            const quoteId = button.getAttribute('id')
+                            console.log("clicked", button, quoteId)
+                            fetch(`/quotes/${quoteId}`, {
+                                method: 'delete',
+                            })
+
+                            window.location.reload()
+                        })
+                    })
+                    const postQuote = document.querySelector('#postQuote')
+
+                    postQuote.addEventListener('click', (e) => {
+                        // e.preventDefault()
+
+                        window.location.href = `${window.location.origin}/quotes`
+
+                    })
+
+                </script>
+
+    </body>
+
+    </html>
